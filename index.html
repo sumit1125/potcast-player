@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Audio Uploader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+
+        .upload-container {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .upload-input {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .play-button,
+        .pause-button,
+        .rewind-button {
+            display: inline-block;
+            padding: 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: #fff;
+            border-radius: 5px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .play-button:hover,
+        .pause-button:hover,
+        .rewind-button:hover {
+            background-color: #3e8e41;
+        }
+
+        .table-container {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="upload-container">
+        <label for="audio-file">Upload an audio file:</label>
+        <input type="file" id="audio-file" class="upload-input">
+    </div>
+
+    <div class="player-container">
+        <audio id="audio-player"></audio>
+        <div class="controls">
+            <button id="play-button" class="play-button">Play</button>
+            <button id="pause-button" class="pause-button">Pause</button>
+            <button id="rewind-button" class="rewind-button">Rewind</button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody id="file-details"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const audioFileInput = document.getElementById('audio-file');
+        const audioPlayer = document.getElementById('audio-player');
+        const playButton = document.getElementById('play-button');
+        const pauseButton = document.getElementById('pause-button');
+        const rewindButton = document.getElementById('rewind-button');
+        const fileDetailsTable = document.getElementById('file-details');
+        const timestamp = document.getElementById('timestamp');
+
+        audioFileInput.addEventListener('change', function () {
+            const file = audioFileInput.files[0];
+            const url = URL.createObjectURL(file);
+            audioPlayer.src = url;
+            const row = fileDetailsTable.insertRow();
+            const fileNameCell = row.insertCell(0);
+            fileNameCell.innerHTML = file.name;
+            const durationCell = row.insertCell(1);
+            const duration = new Date(null);
+            duration.setSeconds(audioPlayer.duration);
+            durationCell.innerHTML = duration.toISOString().substr(11, 8);
+        });
+
+        playButton.addEventListener('click', function () {
+            audioPlayer.play();
+        });
+
+        pauseButton.addEventListener('click', function () {
+            audioPlayer.pause();
+        });
+
+        rewindButton.addEventListener('click', function () {
+            audioPlayer.currentTime = 0;
+        });
+
+        audioPlayer.addEventListener('timeupdate', function () {
+            const currentTime = new Date(null);
+            currentTime.setSeconds(audioPlayer.currentTime);
+            const totalTime = new Date(null);
+            totalTime.setSeconds(audioPlayer.duration);
+            timestamp.innerHTML = currentTime.toISOString().substr(11, 8) + '/' + totalTime.toISOString().substr(11, 8);
+        });
+
+    </script>
